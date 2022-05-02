@@ -3,7 +3,7 @@ from fastapi import FastAPI,Form,Depends
 from fastapi.params import Body
 from pydantic import BaseModel
 from model import User,Account,Profile,Session,engine,desc
-from schemas import Post
+from schemas import Post,Users
 app = FastAPI()
 
 
@@ -24,23 +24,23 @@ async def create_posts(new_post: Post = Depends(Post.as_form)):
     return {'message':'successfully created posts'}
 
 @app.post("/createuser")
-async def create_user(username:str = Form(...),email:str = Form(...),sponser_id:int = Form(...),adrs:str=Form(...)):
+async def create_user(new_user:Users = Depends(Users.as_form)):
     local_session = Session(bind=engine)
-    print("username:",username)
-    print("email:",email)
-    print("Sponser id:",sponser_id)
-    print("address:",adrs)
+    print("username:",new_user.username)
+    print("email:",new_user.email)
+    print("Sponser id:",new_user.sponser_id)
+    print("address:",new_user.adrs)
 
     try:
-        add_user = User(username=username, email=email)
-        local_session.add(add_user)
+        # add_user = User(username=new_user.username, email=new_user.email)
+        # local_session.add(add_user)
       
 
         new_id = local_session.query(User).order_by(desc(User.id)).first()
         print("new id:",new_id.id)
-        add_profile = Profile(user_id=new_id.id,sponser_id = sponser_id,address = adrs)
-        local_session.add(add_profile)
-        local_session.commit()
+        # add_profile = Profile(user_id=new_id.id,sponser_id = new_user.sponser_id,address = new_user.adrs)
+        # local_session.add(add_profile)
+        # local_session.commit()
         return {'message':'successfully created users'}
     except:
         return {'message':'not created'}
