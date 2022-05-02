@@ -1,7 +1,15 @@
-from fastapi import FastAPI,Form
+from ast import For
+from fastapi import FastAPI,Form,Depends
 from fastapi.params import Body
+from pydantic import BaseModel
 from model import User,Account,Profile,Session,engine,desc
+from schemas import Post
 app = FastAPI()
+
+
+
+
+    
 
 @app.get("/")
 def read_root():
@@ -10,10 +18,9 @@ def read_root():
 
             
 @app.post("/createposts")
-async def create_posts(id: int = Form(...), name:str = Form(...), address: str = Form(...)):
-    print("id:",id)
-    print("username:",name)
-    print("address:",address)
+async def create_posts(new_post: Post = Depends(Post.as_form)):
+    print("username:",new_post.title)
+    print("new post:",new_post)
     return {'message':'successfully created posts'}
 
 @app.post("/createuser")
